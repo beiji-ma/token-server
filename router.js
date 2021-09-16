@@ -5,6 +5,7 @@ const { signupValidation, loginValidation } = require('./validation')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { Result } = require('express-validator')
+const { commit } = require('./dbConnection')
 
 const JWT_SECRET = 'secret'
 
@@ -36,8 +37,25 @@ router.post('/register', signupValidation, (req, res, next) => {
                     msg: err
                   })
                 }
-                return res.status(201).send({
-                  msg: 'successfully reigstered.'
+                const token = jwt.sign(
+                  {
+                    id: '',
+                    name: req.body.name,
+                    iss: 'aa',
+                    // exp: 'xxx',// number of seconds
+                    sub: 'xxx',
+                    aud: 'xxdd',
+                    // nbf: 'fff',// number of seconds
+                    jti: 'aaa',
+                    auth: 'ibm',
+                    typ: 'JWT',
+                    alg: 'HS256'
+                  },
+                  JWT_SECRET, { expiresIn: '1h' });
+                return res.status(200).send({
+                  msg: '登陆成功',
+                  token,
+                  user: req.body.name
                 })
               }
             )
