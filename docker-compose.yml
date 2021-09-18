@@ -1,0 +1,24 @@
+version: "3"
+services:
+        web:
+                image: node:12-alpine
+                working_dir: /code
+                volumes:
+                        - .:/code
+                ports:
+                        - "3000:3000"
+                depends_on:
+                        - mysql
+                environment:
+                        - DATABASE_HOST=mysql
+                command: /bin/sh -c "npm install && npm start"
+        mysql:
+                image: mysql:5.6
+                command: --init-file /data/init.sql
+                volumes:
+                        - ./scripts/database.sql:/data/init.sql
+                environment:
+                        - MYSQL_ROOT_PASSWORD=123456
+                        - MYSQL_DATABASE=auth
+                ports:
+                        - "4306:3306"
